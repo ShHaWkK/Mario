@@ -35,7 +35,6 @@ public class Vaisseau extends Entite {
 	}
 	
 	public void dessinVaisseau(Graphics g) {
-		if(this.vivant == false) {this.destructionVaisseau();}
 		g.drawImage(this.img, this.deplacementVaisseau(), this.yPos, null);
 	}
 	
