@@ -35,8 +35,7 @@ public class Scene extends JPanel {
 	private Font afficheTexte = new Font("Arial", Font.PLAIN, 80);
 	
 	public int score = 0;
-	
-/**** CONSTRUCTEUR ****/
+
 	
 	public Scene() {
 		super();
