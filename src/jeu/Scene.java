@@ -19,7 +19,7 @@ import ressources.Constantes;
 
 public class Scene extends JPanel {
 	
-/**** VARIABLES ****/	
+/**** ATTRIBUTS ****/
 	
 	public Vaisseau vaisseau = new Vaisseau();
 	public GroupeAliens groupeAliens = new GroupeAliens();
@@ -99,31 +99,39 @@ public class Scene extends JPanel {
 		}
 		
 		// Affichage de la fin du jeu
-		if(this.vaisseau.isVivant() == false) {
+		if(!this.vaisseau.isVivant()) {
 			g.setFont(afficheTexte);
-			g.drawString("GAME OVER", 50, 100);
+			g.drawString("GAME OVER\n", 50, 100);
+			g.drawString("Press 'space'", 30, 200);
+
 		}
 		
 		// Détection contact tirVaisseau avec château
 		this.tirVaisseau.tirVaisseauDetruitChateau(tabChateaux);	
 		
 		// Dessin des tirs des aliens
-		if(Chrono.compteTours % 500 == 0) {
-			tirAlien1 = new TirAlien(this.groupeAliens.choixAlienQuiTire());}
-		if(this.tirAlien1 != null) {
+		if(Chrono.compteTours % 500 == 0 && vaisseau.isVivant()) {
+			tirAlien1 = new TirAlien(this.groupeAliens.choixAlienQuiTire());
+		}
+
+		if(this.tirAlien1 != null ) {
 			this.tirAlien1.dessinTirAlien(g2);
 			this.tirAlien1.TirAlienDetruitChateau(tabChateaux); // Détection contact tirAlien1 avec château
 			if(this.tirAlien1.toucheVaisseau(vaisseau) == true) {this.vaisseau.setVivant(false);}
 		}
-		if(Chrono.compteTours % 750 == 0) {
-			tirAlien2 = new TirAlien(this.groupeAliens.choixAlienQuiTire());}
+		if(Chrono.compteTours % 750 == 0 && vaisseau.isVivant()) {
+			tirAlien2 = new TirAlien(this.groupeAliens.choixAlienQuiTire());
+
+		}
 		if(this.tirAlien2 != null) {
 			this.tirAlien2.dessinTirAlien(g2);
 			this.tirAlien2.TirAlienDetruitChateau(tabChateaux); // Détection contact tirAlien2 avec château
 			if(this.tirAlien2.toucheVaisseau(vaisseau) == true) {this.vaisseau.setVivant(false);}
 		}
-		if(Chrono.compteTours % 900 == 0) {
-			tirAlien3 = new TirAlien(this.groupeAliens.choixAlienQuiTire());}
+		if(Chrono.compteTours % 900 == 0 && vaisseau.isVivant()) {
+			tirAlien3 = new TirAlien(this.groupeAliens.choixAlienQuiTire());
+		}
+
 		if(this.tirAlien3 != null) {
 			this.tirAlien3.dessinTirAlien(g2);
 			this.tirAlien3.TirAlienDetruitChateau(tabChateaux); // Détection contact tirAlien3 avec château
@@ -131,7 +139,7 @@ public class Scene extends JPanel {
 		}
 		// Dessin de la soucoupe		
 		if(Chrono.compteTours % 2500 == 0) {soucoupe = new Soucoupe();}		
-		if(this.soucoupe != null) {
+		if(this.soucoupe != null && this.vaisseau.isVivant()) {
 			if(this.soucoupe.getxPos()>0) {	
 				// Détection contact tir vaisseau avec soucoupe	
 				if(this.tirVaisseau.detruitSoucoupe(this.soucoupe) == true) {
@@ -147,6 +155,29 @@ public class Scene extends JPanel {
 		
 		if(this.groupeAliens.getNombreAliens() == 0) {groupeAliens = new GroupeAliens();}
 	
-		if(this.groupeAliens.positionAlienLePlusBas() > Constantes.Y_POS_VAISSEAU) {this.vaisseau.destructionVaisseau();}			
-	}	
+		if(this.groupeAliens.positionAlienLePlusBas() > Constantes.Y_POS_VAISSEAU) {
+			vaisseau.setVivant(false);
+		}
+	}
+
+	public void reset() {
+		this.vaisseau = new Vaisseau();
+		this.tirVaisseau = new TirVaisseau();
+		this.groupeAliens = new GroupeAliens();
+		this.tirAlien1 = null;
+		this.tirAlien2 = null;
+		this.tirAlien3 = null;
+		this.soucoupe = null;
+		this.score = 0;
+		for(int colonne=0; colonne<4; colonne++) {
+			this.tabChateaux[colonne] = new Chateau(Constantes.MARGE_FENETRE +
+					Constantes.X_POS_INIT_CHATEAU + colonne * (Constantes.LARGEUR_CHATEAU + Constantes.ECART_CHATEAU));
+		}
+
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+		this.addKeyListener(new Clavier());
+		Thread chronoEcran = new Thread(new Chrono());
+		chronoEcran.start();
+	}
 }

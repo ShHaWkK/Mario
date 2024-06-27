@@ -20,6 +20,10 @@ public class Clavier implements KeyListener {
 					Main.scene.tirVaisseau.setVaisseauTire(true);
 				}
 		    }
+		} else {
+			if(e.getKeyCode() == KeyEvent.VK_SPACE){
+				Main.scene.reset();
+			}
 		}
 	}
 
